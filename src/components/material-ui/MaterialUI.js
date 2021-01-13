@@ -10,6 +10,9 @@ const Button = lazy(() =>
 const Grid = lazy(() =>
   import(/* webpackMode: "eager" */ '@material-ui/core/Grid')
 );
+const TextField = lazy(() =>
+  import(/* webpackMode: "eager" */ '@material-ui/core/TextField')
+);
 
 export const ButtonUI = (props) => {
   return (
@@ -24,6 +27,13 @@ export const GridUI = (props) => {
       fallback={<div className={props.className}>{props.children}</div>}
     >
       <Grid {...props} />
+    </Suspense>
+  );
+};
+export const TextFieldUI = (props) => {
+  return (
+    <Suspense fallback={<input className={props.className} />}>
+      <TextField {...props} />
     </Suspense>
   );
 };

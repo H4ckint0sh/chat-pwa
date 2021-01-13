@@ -1,20 +1,23 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useContext, useState } from 'react';
-import { withRouter, Redirect, Link } from 'react-router-dom';
-// import ButtonUI from '@material-ui/core/ButtonUI';
+import React, { useContext, useState, lazy, Suspense } from 'react';
+import { withRouter, Redirect } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-// import GridUI from '@material-ui/core/GridUI';
+import Grid from '@material-ui/core/Grid';
 import { FcGoogle } from 'react-icons/fc';
 import { makeStyles } from '@material-ui/core/styles';
 import firebase from 'firebase/app';
-import { ButtonUI, GridUI } from './material-ui/MaterialUI';
 import app, { database } from '../config/firebase';
 import { AuthContext } from '../context/Auth';
+
+const Link = lazy(() =>
+  import('react-router-dom').then((mod) => ({ default: mod.Link }))
+);
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -119,7 +122,7 @@ const Login = ({ history }) => {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          <ButtonUI
+          <Button
             type="submit"
             fullWidth
             variant="contained"
@@ -127,10 +130,10 @@ const Login = ({ history }) => {
             className={classes.submit}
           >
             Sign In
-          </ButtonUI>
-          <GridUI container style={{ margin: '10px 0' }}>
-            <GridUI item>
-              <ButtonUI
+          </Button>
+          <Grid container style={{ margin: '10px 0' }}>
+            <Grid item>
+              <Button
                 variant="outlined"
                 style={{ padding: 10 }}
                 onClick={handleGoogleLogin}
@@ -138,21 +141,25 @@ const Login = ({ history }) => {
                 endIcon={<FcGoogle />}
               >
                 Sign In With
-              </ButtonUI>
-            </GridUI>
-          </GridUI>
-          <GridUI container>
-            <GridUI item xs>
-              <Link to="recover" variant="body2">
-                Forgot password?
-              </Link>
-            </GridUI>
-            <GridUI item>
-              <Link to="signup" variant="body2">
-                Don't have an account? Sign Up
-              </Link>
-            </GridUI>
-          </GridUI>
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs>
+              <Suspense>
+                <Link to="recover" variant="body2">
+                  Forgot password?
+                </Link>
+              </Suspense>
+            </Grid>
+            <Grid item>
+              <Suspense>
+                <Link to="signup" variant="body2">
+                  Don't have an account? Sign Up
+                </Link>
+              </Suspense>
+            </Grid>
+          </Grid>
         </form>
       </div>
     </Container>
