@@ -145,20 +145,20 @@ const Login = ({ history }) => {
             </Grid>
           </Grid>
           <Grid container>
-            <Grid item xs>
-              <Suspense>
+            <Suspense fallback={<div />}>
+              <Grid item xs>
                 <Link to="recover" variant="body2">
                   Forgot password?
                 </Link>
-              </Suspense>
-            </Grid>
-            <Grid item>
-              <Suspense>
+              </Grid>
+            </Suspense>
+            <Suspense>
+              <Grid item>
                 <Link to="signup" variant="body2">
                   Don't have an account? Sign Up
                 </Link>
-              </Suspense>
-            </Grid>
+              </Grid>
+            </Suspense>
           </Grid>
         </form>
       </div>
