@@ -41,7 +41,7 @@ export default function CustomizedInputBase({
     <Paper component="form" className={classes.root}>
       <InputBase
         className={classes.input}
-        placeholder="Type Your Message ..."
+        // placeholder="Type Your Message ..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={(e) => handleKeyDown(e)}

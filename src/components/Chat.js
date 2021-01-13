@@ -1,5 +1,12 @@
 /* eslint-disable import/no-unresolved */
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  lazy,
+  Suspense,
+} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Paper,
@@ -14,12 +21,13 @@ import {
 } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import firebase from 'firebase';
-import UserListItem from './UserListItem';
-import MessageListItem from './MessageListItem';
 import app, { database } from '../config/firebase';
 import { AuthContext } from '../context/Auth';
 import FormatDate from '../util/getDate';
-import MessageInput from './MessageInput';
+
+const UserListItem = lazy(() => import('./UserListItem'));
+const MessageListItem = lazy(() => import('./MessageListItem'));
+const MessageInput = lazy(() => import('./MessageInput'));
 
 const useStyles = makeStyles({
   chatSection: {
@@ -114,87 +122,90 @@ const Chat = () => {
 
   return (
     <div>
-      <Grid container component={Paper} className={classes.chatSection}>
-        <Grid item xs={12} style={{ borderBottom: '1px solid #e0e0e0' }}>
-          <Toolbar style={{ height: '4vh' }}>
-            <Typography style={{ flex: 1 }}>Chat</Typography>
-            <Button onClick={logOut}>LogOut</Button>
-          </Toolbar>
-        </Grid>
-        <Grid item xs={3} className={classes.borderRight500}>
-          <List>
-            <UserListItem
-              id="JohnWick"
-              alt="John Wick"
-              src="https://material-ui.com/static/images/avatar/1.jpg"
-              primary="John Wick"
-            />
-          </List>
-          <Divider />
-          <Grid item xs={12} style={{ padding: 5, display: 'flex' }}>
-            <InputBase
-              id="outlined-basic-search"
-              placeholder="Search users ..."
-              variant="outlined"
-              fullWidth
-            />
-            <IconButton
-              type="submit"
-              className={classes.iconButton}
-              aria-label="send"
-              disabled
-            >
-              <Search />
-            </IconButton>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Grid container component={Paper} className={classes.chatSection}>
+          <Grid item xs={12} style={{ borderBottom: '1px solid #e0e0e0' }}>
+            <Toolbar style={{ height: '4vh' }}>
+              <Typography style={{ flex: 1 }}>Chat</Typography>
+              <Button onClick={logOut}>LogOut</Button>
+            </Toolbar>
           </Grid>
-          <Divider />
-          {users.length !== 0 &&
-            users.map((user) => {
-              return (
-                <UserListItem
-                  id={user.id.toString()}
-                  alt={user.name}
-                  src={user.photoUrl ? user.photoUrl : undefined}
-                  primary={user.name}
-                  secondary="online"
-                />
-              );
-            })}
-        </Grid>
-        <Grid item xs={9}>
-          <List className={classes.messageArea}>
-            {messages.length !== 0 &&
-              messages.map((item) => {
+          <Grid item xs={3} className={classes.borderRight500}>
+            <List>
+              <UserListItem
+                id="JohnWick"
+                alt="John Wick"
+                src="https://material-ui.com/static/images/avatar/1.jpg"
+                primary="John Wick"
+              />
+            </List>
+            <Divider />
+            <Grid item xs={12} style={{ padding: 5, display: 'flex' }}>
+              <InputBase
+                id="outlined-basic-search"
+                placeholder="Search users ..."
+                variant="outlined"
+                fullWidth
+              />
+              <IconButton
+                type="submit"
+                className={classes.iconButton}
+                aria-label="send"
+                disabled
+              >
+                <Search />
+              </IconButton>
+            </Grid>
+            <Divider />
+            {users.length !== 0 &&
+              users.map((user) => {
                 return (
-                  <MessageListItem
-                    id={`${item.timestamp.seconds}-${item.timestamp.nanoseconds}`}
-                    align={item.userId === currentUser.uid ? 'right' : 'left'}
-                    primary={item.msg}
-                    secondary={item.timestamp && FormatDate(item.timestamp)}
+                  <UserListItem
+                    id={user.id.toString()}
+                    alt={user.name}
+                    src={user.photoUrl ? user.photoUrl : undefined}
+                    primary={user.name}
+                    secondary="online"
                   />
                 );
               })}
-            <div ref={messagesEndRef} />
-          </List>
-          <Grid container>
-            <Grid
-              item
-              xs={12}
-              style={{
-                height: 50,
-                position: 'relative',
-              }}
-            >
-              <MessageInput
-                message={message}
-                setMessage={setMessage}
-                handleKeyDown={handleKeyDown}
-                sendMessage={sendMessage}
-              />
+          </Grid>
+          <Grid item xs={9}>
+            <List className={classes.messageArea}>
+              {messages.length !== 0 &&
+                messages.map((item) => {
+                  console.log(item.timestamp);
+                  return (
+                    <MessageListItem
+                      id={item.timestamp}
+                      align={item.userId === currentUser.uid ? 'right' : 'left'}
+                      primary={item.msg}
+                      secondary={item.timestamp && FormatDate(item.timestamp)}
+                    />
+                  );
+                })}
+              <div ref={messagesEndRef} />
+            </List>
+            <Grid container>
+              <Grid
+                item
+                xs={12}
+                style={{
+                  height: 50,
+                  position: 'relative',
+                }}
+              >
+                <MessageInput
+                  message={message}
+                  setMessage={setMessage}
+                  handleKeyDown={handleKeyDown}
+                  sendMessage={sendMessage}
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </Suspense>
     </div>
   );
 };
