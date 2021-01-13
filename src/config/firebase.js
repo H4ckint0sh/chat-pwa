@@ -5,15 +5,13 @@ import 'firebase/database';
 
 const app = !firebase.apps.length
   ? firebase.initializeApp({
-      apiKey: 'AIzaSyDgghoHIJgt2_wf5tJwHarzX1ZX_-2vwvA',
-      authDomain: 'chat-50ae5.firebaseapp.com',
-      databaseURL:
-        'https://chat-50ae5-default-rtdb.europe-west1.firebasedatabase.app',
-      projectId: 'chat-50ae5',
-      storageBucket: 'chat-50ae5.appspot.com',
-      messagingSenderId: '95740192503',
-      appId: '1:95740192503:web:dc15534a45af60603255f2',
-      measurementId: 'G-7NBMGEM6ME',
+      apiKey: 'AIzaSyDL5IW3Um6ORB1wWsz0zFD0lOGeLtvNEys',
+      authDomain: 'pwa-chat-2a253.firebaseapp.com',
+      projectId: 'pwa-chat-2a253',
+      storageBucket: 'pwa-chat-2a253.appspot.com',
+      messagingSenderId: '194265597758',
+      appId: '1:194265597758:web:990119cb7e8ab97474ce6f',
+      measurementId: 'G-5153PG4PFL',
     })
   : firebase.app();
 
