@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useContext, useState, lazy, Suspense } from 'react';
-import { withRouter, Redirect } from 'react-router-dom';
+import React, { lazy, Suspense, useContext, useState } from 'react';
+import { withRouter, Redirect, Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,12 +12,8 @@ import Grid from '@material-ui/core/Grid';
 import { FcGoogle } from 'react-icons/fc';
 import { makeStyles } from '@material-ui/core/styles';
 import firebase from 'firebase/app';
-import app, { database } from '../config/firebase';
+import app from '../config/firebase';
 import { AuthContext } from '../context/Auth';
-
-const Link = lazy(() =>
-  import('react-router-dom').then((mod) => ({ default: mod.Link }))
-);
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -63,16 +59,19 @@ const Login = ({ history }) => {
       .then(async (result) => {
         // const token = result.credential.accessToken;
         const { user } = result;
-        console.log(user.providerData[0]);
-        await database
-          .collection('users')
-          .doc(user.providerData[0].uid.toString())
-          .set({
-            name: user.providerData[0].displayName,
-            id: user.providerData[0].uid.toString(),
-            email: user.providerData[0].email,
-            photoUrl: user.providerData[0].photoURL,
-          });
+        import('firebase/firestore').then(async () => {
+          const database = app.firestore();
+
+          await database
+            .collection('users')
+            .doc(user.providerData[0].uid.toString())
+            .set({
+              name: user.providerData[0].displayName,
+              id: user.providerData[0].uid.toString(),
+              email: user.providerData[0].email,
+              photoUrl: user.providerData[0].photoURL,
+            });
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -138,27 +137,23 @@ const Login = ({ history }) => {
                 style={{ padding: 10 }}
                 onClick={handleGoogleLogin}
                 color="primary"
-                endIcon={<FcGoogle />}
+                startIcon={<FcGoogle />}
               >
                 Sign In With
               </Button>
             </Grid>
           </Grid>
           <Grid container>
-            <Suspense fallback={<div />}>
-              <Grid item xs>
-                <Link to="recover" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-            </Suspense>
-            <Suspense>
-              <Grid item>
-                <Link to="signup" variant="body2">
-                  Don't have an account? Sign Up
-                </Link>
-              </Grid>
-            </Suspense>
+            <Grid item xs>
+              <Link to="recover" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link to="signup" variant="body2">
+                Don't have an account? Sign Up
+              </Link>
+            </Grid>
           </Grid>
         </form>
       </div>

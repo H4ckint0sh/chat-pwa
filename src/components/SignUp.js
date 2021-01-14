@@ -12,7 +12,7 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
-import app, { database } from '../config/firebase';
+import app from '../config/firebase';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -48,7 +48,7 @@ const SignUp = ({ history }) => {
       await app
         .auth()
         .createUserWithEmailAndPassword(email, password)
-        .then(async (resp) => {
+        .then((resp) => {
           const fullName = `${
             firstName.charAt(0).toUpperCase() +
             firstName.substring(1, firstName.length)
@@ -56,10 +56,17 @@ const SignUp = ({ history }) => {
             lastName.charAt(0).toUpperCase() +
             lastName.substring(1, lastName.length)
           }`;
-          await database.collection('users').doc(resp.user.uid.toString()).set({
-            name: fullName,
-            id: resp.user.uid.toString(),
-            email: resp.user.email,
+          import('firebase/firestore').then(async () => {
+            const database = app.firestore();
+
+            await database
+              .collection('users')
+              .doc(resp.user.uid.toString())
+              .set({
+                name: fullName,
+                id: resp.user.uid.toString(),
+                email: resp.user.email,
+              });
           });
         });
       history.push('/login');

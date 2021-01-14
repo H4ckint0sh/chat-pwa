@@ -1,12 +1,11 @@
 import firebase from 'firebase/app';
-import 'firebase/auth';
-import 'firebase/firestore';
-import 'firebase/database';
 
 const app = !firebase.apps.length
   ? firebase.initializeApp({
       apiKey: 'AIzaSyDL5IW3Um6ORB1wWsz0zFD0lOGeLtvNEys',
       authDomain: 'pwa-chat-2a253.firebaseapp.com',
+      databaseURL:
+        'https://pwa-chat-2a253-default-rtdb.europe-west1.firebasedatabase.app',
       projectId: 'pwa-chat-2a253',
       storageBucket: 'pwa-chat-2a253.appspot.com',
       messagingSenderId: '194265597758',
@@ -15,6 +14,4 @@ const app = !firebase.apps.length
     })
   : firebase.app();
 
-export const database = firebase.firestore();
-export const db = firebase.database();
 export default app;

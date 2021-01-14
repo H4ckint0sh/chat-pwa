@@ -8,9 +8,13 @@ export const AuthProvider = ({ children }) => {
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
-    app.auth().onAuthStateChanged((user) => {
-      setCurrentUser(user);
-      setPending(false);
+    import('firebase/auth').then(() => {
+      const auth = app.auth();
+
+      auth.onAuthStateChanged((user) => {
+        setCurrentUser(user);
+        setPending(false);
+      });
     });
   }, []);
 
@@ -22,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
-        setCurrentUser,
       }}
     >
       {children}
