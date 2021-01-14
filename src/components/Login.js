@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { lazy, Suspense, useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { withRouter, Redirect, Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
