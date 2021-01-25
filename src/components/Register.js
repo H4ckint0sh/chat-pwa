@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
@@ -12,7 +12,6 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
-import app from '../config/firebase';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,46 +33,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SignUp = ({ history }) => {
+const SignUp = ({
+  handleSignUp,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  email,
+  setEmail,
+  password,
+  setPassword,
+}) => {
   const classes = useStyles();
-
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSignUp = async (event) => {
-    event.preventDefault();
-    try {
-      await app
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then((resp) => {
-          const fullName = `${
-            firstName.charAt(0).toUpperCase() +
-            firstName.substring(1, firstName.length)
-          }  ${
-            lastName.charAt(0).toUpperCase() +
-            lastName.substring(1, lastName.length)
-          }`;
-          import('firebase/firestore').then(async () => {
-            const database = app.firestore();
-
-            await database
-              .collection('users')
-              .doc(resp.user.uid.toString())
-              .set({
-                name: fullName,
-                id: resp.user.uid.toString(),
-                email: resp.user.email,
-              });
-          });
-        });
-      history.push('/login');
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <Container component="main" maxWidth="xs">

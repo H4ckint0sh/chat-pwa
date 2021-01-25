@@ -1,217 +1,147 @@
-/* eslint-disable import/no-unresolved */
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-  lazy,
-  Suspense,
-} from 'react';
+/* eslint-disable react/jsx-curly-brace-presence */
+import React from 'react';
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import ExitIcon from '@material-ui/icons/ExitToApp';
+import NotificationIcon from '@material-ui/icons/NotificationImportant';
+import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Paper,
-  Grid,
-  Divider,
-  List,
-  InputBase,
-  IconButton,
-  Toolbar,
-  Typography,
-  Button,
-} from '@material-ui/core';
-import { Search } from '@material-ui/icons';
-import firebase from 'firebase';
-import app, { db } from '../config/firebase';
-import { AuthContext } from '../context/Auth';
-import FormatDate from '../util/getDate';
+import ChatMessages from './ChatMessages';
+import MessageInput from './MessageInput';
+import DrawerContent from './DrawerContent';
 
-const UserListItem = lazy(() => import('./UserListItem'));
-const MessageListItem = lazy(() => import('./MessageListItem'));
-const MessageInput = lazy(() => import('./MessageInput'));
+const drawerWidth = 240;
 
-const useStyles = makeStyles({
-  chatSection: {
-    width: '90%',
-    margin: '5vh auto',
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    width: '100vw',
+    height: '100vh',
   },
-  headBG: {
-    backgroundColor: '#e0e0e0',
+  appBar: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
   },
-  borderRight500: {
-    borderRight: '1px solid #e0e0e0',
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
   },
-  messageArea: {
-    height: '70vh',
-    overflowY: 'scroll',
-    borderBottom: '1px solid #e0e0e0',
+  appBarIcons: {
+    marginLeft: 'auto',
   },
-});
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  chat: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '10px',
+  },
+  content: {
+    flexGrow: 1,
+    position: 'relative',
+  },
+  input: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+  },
+}));
 
-const Chat = () => {
+function ResponsiveDrawer(props) {
+  const { window } = props;
   const classes = useStyles();
-  const { currentUser } = useContext(AuthContext);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [users, setUsers] = useState([]);
-  const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
-  useEffect(scrollToBottom, [messages]);
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
-  const postMessage = async (msg) => {
-    await db
-      .collection('messages')
-      .add({
-        msg,
-        author: currentUser.email,
-        userId: currentUser.uid,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-      .then(() => {
-        console.log('message posted');
-      })
-      .catch((error) => {
-        console.error('Error writing document: ', error);
-      });
-  };
-
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (message.length !== 0) {
-      postMessage(message);
-      setMessage('');
-    }
-  };
-
-  useEffect(() => {
-    const unsubscribe = async () => {
-      db.collection('messages')
-        .orderBy('timestamp', 'asc')
-        .onSnapshot((snapshot) => {
-          setMessages(snapshot.docs.map((doc) => doc.data()));
-        });
-    };
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = async () => {
-      db.collection('users').onSnapshot((snapshot) => {
-        setUsers(snapshot.docs.map((doc) => doc.data()));
-      });
-    };
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  const handleKeyDown = (e) => {
-    // send the message if Enter pressed
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      postMessage(message);
-      setMessage('');
-    }
-  };
-
-  const logOut = () => {
-    app.auth().signOut();
-  };
+  const AVATAR =
+    'https://i.pinimg.com/originals/0a/dd/87/0add874e1ea0676c4365b2dd7ddd32e3.jpg';
 
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Grid container component={Paper} className={classes.chatSection}>
-          <Grid item xs={12} style={{ borderBottom: '1px solid #e0e0e0' }}>
-            <Toolbar style={{ height: '4vh' }}>
-              <Typography style={{ flex: 1 }}>Chat</Typography>
-              <Button onClick={logOut}>LogOut</Button>
-            </Toolbar>
-          </Grid>
-          <Grid item xs={3} className={classes.borderRight500}>
-            <List>
-              <UserListItem
-                id="JohnWick"
-                alt="John Wick"
-                src="https://material-ui.com/static/images/avatar/1.jpg"
-                primary="John Wick"
-              />
-            </List>
-            <Divider />
-            <Grid item xs={12} style={{ padding: 5, display: 'flex' }}>
-              <InputBase
-                id="outlined-basic-search"
-                placeholder="Search users ..."
-                variant="outlined"
-                fullWidth
-              />
-              <IconButton
-                type="submit"
-                className={classes.iconButton}
-                aria-label="send"
-                disabled
-              >
-                <Search />
-              </IconButton>
-            </Grid>
-            <Divider />
-            {users.length !== 0 &&
-              users.map((user) => {
-                return (
-                  <UserListItem
-                    id={user.id.toString()}
-                    alt={user.name}
-                    src={user.photoUrl ? user.photoUrl : undefined}
-                    primary={user.name}
-                    secondary="online"
-                  />
-                );
-              })}
-          </Grid>
-          <Grid item xs={9}>
-            <List className={classes.messageArea}>
-              {messages.length !== 0 &&
-                messages.map((item) => {
-                  console.log(item.timestamp);
-                  return (
-                    <MessageListItem
-                      id={item.timestamp}
-                      align={item.userId === currentUser.uid ? 'right' : 'left'}
-                      primary={item.msg}
-                      secondary={item.timestamp && FormatDate(item.timestamp)}
-                    />
-                  );
-                })}
-              <div ref={messagesEndRef} />
-            </List>
-            <Grid container>
-              <Grid
-                item
-                xs={12}
-                style={{
-                  height: 50,
-                  position: 'relative',
-                }}
-              >
-                <MessageInput
-                  message={message}
-                  setMessage={setMessage}
-                  handleKeyDown={handleKeyDown}
-                  sendMessage={sendMessage}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Suspense>
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
+          <div className={classes.appBarIcons}>
+            <IconButton
+              className={classes.exit}
+              color="inherit"
+              aria-label="sign-out"
+              edge="start"
+            >
+              <NotificationIcon />
+            </IconButton>
+            <IconButton
+              className={classes.exit}
+              color="inherit"
+              aria-label="sign-out"
+              edge="start"
+            >
+              <ExitIcon />
+            </IconButton>
+          </div>
+        </Toolbar>
+      </AppBar>
+      <DrawerContent
+        container={container}
+        mobileOpen={mobileOpen}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+      <div className={classes.chat}>
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          <ChatMessages
+            side="left"
+            avatar={AVATAR}
+            messages={[
+              'Hi Jenny, How r u today?',
+              'Did you train yesterday',
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Volutpat lacus laoreet non curabitur gravida.',
+            ]}
+          />
+          <ChatMessages
+            side="right"
+            messages={[
+              "Great! What's about you?",
+              'Of course I did. Speaking of which check this out',
+            ]}
+          />
+          <ChatMessages
+            side="left"
+            avatar={AVATAR}
+            messages={['Im good.', 'See u later.']}
+          />
+        </main>
+        <MessageInput className={classes.input} />
+      </div>
     </div>
   );
-};
+}
 
-export default Chat;
+export default ResponsiveDrawer;

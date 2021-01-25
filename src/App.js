@@ -8,7 +8,7 @@ import PrivateRoute from './PrivateRoute';
 
 const Chat = lazy(() => import('./components/Chat'));
 const LoginContainer = lazy(() => import('./containers/LoginContainer'));
-const SignUp = lazy(() => import('./components/SignUp'));
+const RegisterContainer = lazy(() => import('./containers/RegisterContainer'));
 
 const App = () => {
   return (
@@ -18,7 +18,7 @@ const App = () => {
           <Switch>
             <PrivateRoute exact path="/" component={Chat} />
             <Route exact path="/login" component={LoginContainer} />
-            <Route exact path="/signup" component={SignUp} />
+            <Route exact path="/signup" component={RegisterContainer} />
           </Switch>
         </Suspense>
       </Router>
