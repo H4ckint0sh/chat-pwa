@@ -1,4 +1,6 @@
+/* eslint-disable import/no-mutable-exports */
 import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 const app = !firebase.apps.length
   ? firebase.initializeApp({
@@ -14,4 +16,19 @@ const app = !firebase.apps.length
     })
   : firebase.app();
 
+const db = app.firestore();
+
+let messaging = null;
+try {
+  if (firebase.messaging.isSupported()) {
+    messaging = app.messaging();
+    messaging.onMessage((payload) => {
+      console.log('onMessage:', payload);
+    });
+  }
+} catch (e) {
+  console.log(e);
+}
+
+export { messaging, db };
 export default app;

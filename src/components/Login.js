@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useContext, useState } from 'react';
+import React from 'react';
 import { withRouter, Redirect, Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
@@ -11,9 +11,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import { FcGoogle } from 'react-icons/fc';
 import { makeStyles } from '@material-ui/core/styles';
-import firebase from 'firebase/app';
-import app from '../config/firebase';
-import { AuthContext } from '../context/Auth';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,50 +32,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ history }) => {
+const Login = ({
+  currentUser,
+  handleLogin,
+  email,
+  password,
+  setEmail,
+  setPassword,
+  handleGoogleLogin,
+}) => {
   const classes = useStyles();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    try {
-      await app.auth().signInWithEmailAndPassword(email, password);
-      history.push('/');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-
-    await app
-      .auth()
-      .signInWithPopup(provider)
-      .then(async (result) => {
-        // const token = result.credential.accessToken;
-        const { user } = result;
-        import('firebase/firestore').then(async () => {
-          const database = app.firestore();
-
-          await database
-            .collection('users')
-            .doc(user.providerData[0].uid.toString())
-            .set({
-              name: user.providerData[0].displayName,
-              id: user.providerData[0].uid.toString(),
-              email: user.providerData[0].email,
-              photoUrl: user.providerData[0].photoURL,
-            });
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
     return <Redirect to="/" />;
@@ -130,20 +93,17 @@ const Login = ({ history }) => {
           >
             Sign In
           </Button>
-          <Grid container style={{ margin: '10px 0' }}>
-            <Grid item>
-              <Button
-                variant="outlined"
-                style={{ padding: 10 }}
-                onClick={handleGoogleLogin}
-                color="primary"
-                startIcon={<FcGoogle />}
-              >
-                Sign In With
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid container>
+          <Button
+            variant="outlined"
+            style={{ padding: 10 }}
+            onClick={handleGoogleLogin}
+            fullWidth
+            color="primary"
+            startIcon={<FcGoogle />}
+          >
+            Sign In With Google
+          </Button>
+          <Grid style={{ marginTop: 20 }} container>
             <Grid item xs>
               <Link to="recover" variant="body2">
                 Forgot password?

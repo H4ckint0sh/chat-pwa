@@ -7,7 +7,7 @@ import { AuthProvider } from './context/Auth';
 import PrivateRoute from './PrivateRoute';
 
 const Chat = lazy(() => import('./components/Chat'));
-const Login = lazy(() => import('./components/Login'));
+const LoginContainer = lazy(() => import('./containers/LoginContainer'));
 const SignUp = lazy(() => import('./components/SignUp'));
 
 const App = () => {
@@ -17,7 +17,7 @@ const App = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <Switch>
             <PrivateRoute exact path="/" component={Chat} />
-            <Route exact path="/login" component={Login} />
+            <Route exact path="/login" component={LoginContainer} />
             <Route exact path="/signup" component={SignUp} />
           </Switch>
         </Suspense>

@@ -21,7 +21,7 @@ import {
 } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import firebase from 'firebase';
-import app from '../config/firebase';
+import app, { db } from '../config/firebase';
 import { AuthContext } from '../context/Auth';
 import FormatDate from '../util/getDate';
 
@@ -61,25 +61,21 @@ const Chat = () => {
 
   useEffect(scrollToBottom, [messages]);
 
-  const postMessage = (msg) => {
-    import('firebase/firestore').then(async () => {
-      const database = app.firestore();
-
-      await database
-        .collection('messages')
-        .add({
-          msg,
-          author: currentUser.email,
-          userId: currentUser.uid,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        })
-        .then(() => {
-          console.log('message posted');
-        })
-        .catch((error) => {
-          console.error('Error writing document: ', error);
-        });
-    });
+  const postMessage = async (msg) => {
+    await db
+      .collection('messages')
+      .add({
+        msg,
+        author: currentUser.email,
+        userId: currentUser.uid,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => {
+        console.log('message posted');
+      })
+      .catch((error) => {
+        console.error('Error writing document: ', error);
+      });
   };
 
   const sendMessage = (e) => {
@@ -91,29 +87,24 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = import('firebase/firestore').then(() => {
-      const database = app.firestore();
-
-      database
-        .collection('messages')
+    const unsubscribe = async () => {
+      db.collection('messages')
         .orderBy('timestamp', 'asc')
         .onSnapshot((snapshot) => {
           setMessages(snapshot.docs.map((doc) => doc.data()));
         });
-    });
+    };
     return () => {
       unsubscribe();
     };
   }, []);
 
   useEffect(() => {
-    const unsubscribe = import('firebase/firestore').then(() => {
-      const database = app.firestore();
-
-      database.collection('users').onSnapshot((snapshot) => {
+    const unsubscribe = async () => {
+      db.collection('users').onSnapshot((snapshot) => {
         setUsers(snapshot.docs.map((doc) => doc.data()));
       });
-    });
+    };
 
     return () => {
       unsubscribe();
