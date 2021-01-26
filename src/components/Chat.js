@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: drawerWidth,
     },
   },
+  notification: {
+    marginRight: 20,
+  },
 }));
 
 function ResponsiveDrawer(props) {
@@ -90,9 +93,9 @@ function ResponsiveDrawer(props) {
           </IconButton>
           <div className={classes.appBarIcons}>
             <IconButton
-              className={classes.exit}
+              className={classes.notification}
               color="inherit"
-              aria-label="sign-out"
+              aria-label="notification"
               edge="start"
             >
               <NotificationIcon />

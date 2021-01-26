@@ -3,14 +3,19 @@ import {
   Divider,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   Hidden,
   Drawer,
   Avatar,
   Typography,
+  IconButton,
+  Button,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  InputBase,
+  Paper,
 } from '@material-ui/core';
-import { Mail, Inbox } from '@material-ui/icons';
+import { Add, MeetingRoom, MoreVert, Search } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
@@ -39,6 +44,22 @@ const useStyles = makeStyles((theme) => ({
   displayName: {
     paddingTop: 20,
   },
+  addRoom: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 60,
+  },
+  addButton: {
+    height: '60%',
+    borderRadius: 20,
+  },
+  search: {
+    width: '100%',
+  },
+  input: {
+    padding: '0 12px',
+  },
 }));
 
 function DrawerContent({ container, mobileOpen, handleDrawerToggle }) {
@@ -54,27 +75,52 @@ function DrawerContent({ container, mobileOpen, handleDrawerToggle }) {
         <Typography>alijan.adeli@gmail.com</Typography>
       </div>
       <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <Inbox /> : <Mail />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <div className={classes.addRoom}>
+        <Button
+          className={classes.addButton}
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+        >
+          Add a chatroom
+        </Button>
+      </div>
       <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <Inbox /> : <Mail />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
+      <Paper component="form" className={classes.search}>
+        <InputBase
+          className={classes.input}
+          placeholder="Search a room ..."
+          inputProps={{ 'aria-label': 'search-a-room' }}
+        />
+        <IconButton
+          type="submit"
+          className={classes.iconButton}
+          aria-label="search"
+          disabled
+        >
+          <Search />
+        </IconButton>
+      </Paper>
+      <div className={classes.demo}>
+        <List>
+          <ListItem>
+            <ListItemAvatar>
+              <Avatar>
+                <MeetingRoom />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary="Single-line item"
+              secondary="Secondary text"
+            />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" aria-label="delete">
+                <MoreVert />
+              </IconButton>
+            </ListItemSecondaryAction>
           </ListItem>
-        ))}
-      </List>
+        </List>
+      </div>
     </div>
   );
   return (

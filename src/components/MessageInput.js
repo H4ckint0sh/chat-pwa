@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '30px',
   },
   input: {
-    padding: '10px',
+    padding: '5px 10px',
     flex: 1,
   },
   iconButton: {
