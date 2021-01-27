@@ -118,7 +118,7 @@ function DrawerContent({
           <Search />
         </IconButton>
       </Paper>
-      {searchResults ? (
+      {searchResults && (
         <div className={classes.rooms}>
           <List>
             {searchResults.map((result) => (
@@ -141,7 +141,8 @@ function DrawerContent({
             ))}
           </List>
         </div>
-      ) : rooms ? (
+      )}
+      {rooms && !searchResults && (
         <div className={classes.rooms}>
           <List>
             {rooms &&
@@ -165,7 +166,7 @@ function DrawerContent({
               ))}
           </List>
         </div>
-      ) : null}
+      )}
     </div>
   );
   return (
