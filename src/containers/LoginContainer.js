@@ -26,19 +26,13 @@ function LoginContainer(props) {
       .signInWithPopup(provider)
       .then(async (result) => {
         // const token = result.credential.accessToken;
-        const { user } = result;
-        import('firebase/firestore').then(async () => {
-          await db
-            .collection('users')
-            .doc(user.providerData[0].uid.toString())
-            .set({
-              name: user.providerData[0].displayName,
-              id: user.providerData[0].uid.toString(),
-              email: user.providerData[0].email,
-              photoUrl: user.providerData[0].photoURL,
-              notify: false,
-            });
-        });
+        const user = {
+          displayName: result.user.displayName,
+          photoURL: result.user.photoURL,
+          uid: result.user.uid,
+          email: result.user.email,
+        };
+        await db.collection('users').doc(user.uid).set(user);
       })
       .catch((error) => {
         console.log(error);
