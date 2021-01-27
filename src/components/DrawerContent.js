@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 function DrawerContent({
   user,
   rooms,
+  setRoom,
   mobileOpen,
   handleDrawerToggle,
   showCreate,
@@ -122,7 +123,7 @@ function DrawerContent({
         <div className={classes.rooms}>
           <List>
             {searchResults.map((result) => (
-              <ListItem key={result.id}>
+              <ListItem button key={result.id} onClick={() => setRoom(result)}>
                 <ListItemAvatar>
                   <Avatar>
                     <MeetingRoom />
@@ -142,12 +143,12 @@ function DrawerContent({
           </List>
         </div>
       )}
-      {rooms && !searchResults && (
+      {searchResults.length === 0 && !searchWord && (
         <div className={classes.rooms}>
           <List>
             {rooms &&
               rooms.map((room) => (
-                <ListItem key={room.id}>
+                <ListItem button key={room.id} onClick={() => setRoom(room)}>
                   <ListItemAvatar>
                     <Avatar>
                       <MeetingRoom />

@@ -1,10 +1,14 @@
-import React, { useContext, useState, useEffect } from 'react';
+/* eslint-disable no-shadow */
+/* eslint-disable no-undef */
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../context/Auth';
 import { db, auth } from '../config/firebase';
 import Chat from '../components/Chat';
 import Notifications from '../Notifications';
 
 function ChatContainer({ history }) {
+  const el = useRef(null);
+
   const { currentUser } = useContext(AuthContext);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
@@ -13,6 +17,14 @@ function ChatContainer({ history }) {
   const [notify, setNotify] = useState(false);
   const [searchWord, setSearchWord] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [room, setRoom] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+
+  // auto scrool to bottom of chat container
+  useEffect(() => {
+    el.current.scrollIntoView({ block: 'end', behavior: 'auto' });
+  });
 
   useEffect(() => {
     const notificationsInstans = new Notifications();
@@ -33,6 +45,36 @@ function ChatContainer({ history }) {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  useEffect(() => {
+    setInput('');
+    (async () => {
+      await db
+        .collection('rooms')
+        .doc(room.id)
+        .collection('messages')
+        .orderBy('timestamp', 'asc')
+        .onSnapshot((snapshot) => {
+          setMessages(snapshot.docs.map((doc) => doc.data()));
+        });
+    })();
+  }, [room]);
+
+  const sendMessage = (e) => {
+    e.preventDefault();
+    // setPopup(false);
+    if (input && input.trim().length > 0) {
+      (async () => {
+        await db.collection('rooms').doc(room.id).collection('messages').add({
+          name: currentUser.displayName,
+          message: input,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          userId: currentUser.uid,
+        });
+      })();
+    }
+    setInput('');
   };
 
   useEffect(() => {
@@ -79,6 +121,7 @@ function ChatContainer({ history }) {
     notifications.deleteToken();
   };
 
+  // serch rooms
   useEffect(() => {
     const results = rooms.filter((room) => room.name.includes(searchWord));
     setSearchResults(results);
@@ -100,6 +143,12 @@ function ChatContainer({ history }) {
       searchWord={searchWord}
       setSearchWord={setSearchWord}
       searchResults={searchResults}
+      input={input}
+      setInput={setInput}
+      sendMessage={sendMessage}
+      messages={messages}
+      setRoom={setRoom}
+      el={el}
     />
   );
 }

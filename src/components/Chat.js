@@ -77,6 +77,12 @@ function Chat({
   searchWord,
   setSearchWord,
   searchResults,
+  setRoom,
+  messages,
+  input,
+  setInput,
+  sendMessage,
+  el,
 }) {
   const classes = useStyles();
 
@@ -129,19 +135,12 @@ function Chat({
         searchWord={searchWord}
         setSearchWord={setSearchWord}
         searchResults={searchResults}
+        setRoom={setRoom}
       />
       <div className={classes.chat}>
-        <main className={classes.content}>
+        <main ref={el} className={classes.content}>
           <div className={classes.toolbar} />
-          <ChatMessages
-            side="left"
-            avatar={AVATAR}
-            messages={[
-              'Hi Jenny, How r u today?',
-              'Did you train yesterday',
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Volutpat lacus laoreet non curabitur gravida.',
-            ]}
-          />
+          <ChatMessages side="left" avatar={AVATAR} messages={messages} />
           <ChatMessages
             side="right"
             messages={[
@@ -155,7 +154,12 @@ function Chat({
             messages={['Im good.', 'See u later.']}
           />
         </main>
-        <MessageInput className={classes.input} />
+        <MessageInput
+          input={input}
+          setInput={setInput}
+          sendMessage={sendMessage}
+          className={classes.input}
+        />
       </div>
     </div>
   );

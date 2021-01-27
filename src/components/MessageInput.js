@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MessageInput() {
+export default function MessageInput({ input, setInput, sendMessage }) {
   const classes = useStyles();
 
   return (
@@ -35,11 +35,15 @@ export default function MessageInput() {
         className={classes.input}
         placeholder="Type a message ..."
         inputProps={{ 'aria-label': 'type-a-message' }}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => (e.key === 'Enter' ? sendMessage(e) : null)}
       />
       <IconButton
         type="submit"
         className={classes.iconButton}
         aria-label="search"
+        onClick={(e) => sendMessage(e)}
       >
         <SendIcon />
       </IconButton>
