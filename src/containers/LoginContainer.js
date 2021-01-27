@@ -36,6 +36,7 @@ function LoginContainer(props) {
               id: user.providerData[0].uid.toString(),
               email: user.providerData[0].email,
               photoUrl: user.providerData[0].photoURL,
+              notify: false,
             });
         });
       })

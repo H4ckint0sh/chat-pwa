@@ -1,6 +1,7 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-curly-brace-presence */
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -14,6 +15,8 @@ const useStyles = makeStyles(({ palette, spacing }) => {
     avatar: {
       width: size,
       height: size,
+      marginRight: spacing(1),
+      marginTop: spacing(2),
     },
     msg: {
       padding: spacing(1, 2),
@@ -31,9 +34,10 @@ const useStyles = makeStyles(({ palette, spacing }) => {
     left: {
       borderTopRightRadius: radius,
       borderBottomRightRadius: radius,
-      backgroundColor: palette.grey[100],
+      backgroundColor: palette.grey[200],
     },
     leftFirst: {
+      marginTop: spacing(2),
       borderTopLeftRadius: radius,
     },
     leftLast: {
@@ -57,40 +61,49 @@ const useStyles = makeStyles(({ palette, spacing }) => {
   };
 });
 
-const ChatMessages = ({ avatar, messages, side }) => {
+const ChatMessages = ({
+  avatar,
+  message,
+  side,
+  messages,
+  userHasChanged,
+  userGoingToChange,
+}) => {
   const classes = useStyles();
+  const theme = useTheme();
   const attachClass = (index) => {
-    if (index === 0) {
+    if (index === 0 || userHasChanged) {
       return classes[`${side}First`];
     }
-    if (index === messages.length - 1) {
+    if (index === messages.length - 1 || userGoingToChange) {
       return classes[`${side}Last`];
     }
     return '';
   };
   return (
-    <Grid
-      container
-      spacing={2}
-      justify={side === 'right' ? 'flex-end' : 'flex-start'}
-    >
-      {side === 'left' && (
+    <Grid container justify={side === 'right' ? 'flex-end' : 'flex-start'}>
+      {side === 'left' && userHasChanged ? (
         <Grid item>
           <Avatar className={classes.avatar} src={avatar} />
         </Grid>
+      ) : side === 'left' && message.index === 0 ? (
+        <Grid item>
+          <Avatar className={classes.avatar} src={avatar} />
+        </Grid>
+      ) : (
+        <Grid item style={{ width: theme.spacing(5) }} />
       )}
       <Grid item xs={8}>
-        {messages.map((msg, i) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={i} className={classes[`${side}Row`]}>
-            <Typography
-              align="left"
-              className={`${classes.msg} ${classes[side]} ${attachClass(i)}`}
-            >
-              {msg}
-            </Typography>
-          </div>
-        ))}
+        <div className={classes[`${side}Row`]}>
+          <Typography
+            align="left"
+            className={`${classes.msg} ${classes[side]} ${attachClass(
+              message.index
+            )}`}
+          >
+            {message.message.message}
+          </Typography>
+        </div>
       </Grid>
     </Grid>
   );

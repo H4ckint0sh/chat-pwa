@@ -1,3 +1,4 @@
+/* eslint-disable no-unneeded-ternary */
 /* eslint-disable react/jsx-curly-brace-presence */
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
   chat: {
     display: 'flex',
+    width: '100%',
     flexDirection: 'column',
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
@@ -140,19 +142,25 @@ function Chat({
       <div className={classes.chat}>
         <main ref={el} className={classes.content}>
           <div className={classes.toolbar} />
-          <ChatMessages side="left" avatar={AVATAR} messages={messages} />
-          <ChatMessages
-            side="right"
-            messages={[
-              "Great! What's about you?",
-              'Of course I did. Speaking of which check this out',
-            ]}
-          />
-          <ChatMessages
-            side="left"
-            avatar={AVATAR}
-            messages={['Im good.', 'See u later.']}
-          />
+          {messages &&
+            messages.map((message, i) => {
+              return (
+                <ChatMessages
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={message.userId + i}
+                  side={message.userId === user.uid ? 'right' : 'left'}
+                  message={{ message, index: i }}
+                  messages={messages}
+                  userHasChanged={
+                    i !== 0 && messages[i].userId !== messages[i - 1].userId
+                  }
+                  userGoingToChange={
+                    i !== messages.length - 1 &&
+                    messages[i].userId !== messages[i + 1].userId
+                  }
+                />
+              );
+            })}
         </main>
         <MessageInput
           input={input}

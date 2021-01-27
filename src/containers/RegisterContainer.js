@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Register from '../components/Register';
-import app from '../config/firebase';
+import { auth, db } from '../config/firebase';
 
 function RegisterContainer({ history }) {
   const [firstName, setFirstName] = useState('');
@@ -11,8 +11,7 @@ function RegisterContainer({ history }) {
   const handleSignUp = async (event) => {
     event.preventDefault();
     try {
-      await app
-        .auth()
+      await auth()
         .createUserWithEmailAndPassword(email, password)
         .then((resp) => {
           const fullName = `${
@@ -23,16 +22,12 @@ function RegisterContainer({ history }) {
             lastName.substring(1, lastName.length)
           }`;
           import('firebase/firestore').then(async () => {
-            const database = app.firestore();
-
-            await database
-              .collection('users')
-              .doc(resp.user.uid.toString())
-              .set({
-                name: fullName,
-                id: resp.user.uid.toString(),
-                email: resp.user.email,
-              });
+            await db.collection('users').doc(resp.user.uid.toString()).set({
+              name: fullName,
+              id: resp.user.uid.toString(),
+              email: resp.user.email,
+              notify: false,
+            });
           });
         });
       history.push('/login');
