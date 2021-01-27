@@ -1,6 +1,7 @@
 /* eslint-disable import/no-mutable-exports */
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/auth';
 
 const app = !firebase.apps.length
   ? firebase.initializeApp({
@@ -17,6 +18,7 @@ const app = !firebase.apps.length
   : firebase.app();
 
 const db = app.firestore();
+const auth = app.auth();
 
 let messaging = null;
 try {
@@ -30,5 +32,5 @@ try {
   console.log(e);
 }
 
-export { messaging, db };
+export { messaging, db, auth };
 export default app;

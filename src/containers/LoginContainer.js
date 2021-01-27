@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import firebase from 'firebase/app';
-import app from '../config/firebase';
+import { auth, db } from '../config/firebase';
 import { AuthContext } from '../context/Auth';
 import Login from '../components/Login';
 
@@ -12,7 +12,7 @@ function LoginContainer(props) {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      await app.auth().signInWithEmailAndPassword(email, password);
+      await auth().signInWithEmailAndPassword(email, password);
       history.push('/');
     } catch (error) {
       console.log(error);
@@ -22,16 +22,13 @@ function LoginContainer(props) {
   const handleGoogleLogin = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
 
-    await app
-      .auth()
+    await auth
       .signInWithPopup(provider)
       .then(async (result) => {
         // const token = result.credential.accessToken;
         const { user } = result;
         import('firebase/firestore').then(async () => {
-          const database = app.firestore();
-
-          await database
+          await db
             .collection('users')
             .doc(user.providerData[0].uid.toString())
             .set({

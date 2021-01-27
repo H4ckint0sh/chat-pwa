@@ -6,8 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import ExitIcon from '@material-ui/icons/ExitToApp';
-import NotificationIcon from '@material-ui/icons/NotificationImportant';
-import Typography from '@material-ui/core/Typography';
+import { NotificationsActive, NotificationsNone } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import ChatMessages from './ChatMessages';
 import MessageInput from './MessageInput';
@@ -44,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   chat: {
     display: 'flex',
     flexDirection: 'column',
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
     padding: '10px',
   },
   content: {
@@ -61,18 +63,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ResponsiveDrawer(props) {
-  const { window } = props;
+function Chat({
+  user,
+  rooms,
+  mobileOpen,
+  handleDrawerToggle,
+  showCreate,
+  setShowCreate,
+  signOut,
+  notify,
+  notificationsOn,
+  notificationsOff,
+  searchWord,
+  setSearchWord,
+  searchResults,
+}) {
   const classes = useStyles();
-
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
 
   const AVATAR =
     'https://i.pinimg.com/originals/0a/dd/87/0add874e1ea0676c4365b2dd7ddd32e3.jpg';
@@ -97,14 +103,16 @@ function ResponsiveDrawer(props) {
               color="inherit"
               aria-label="notification"
               edge="start"
+              onClick={notify ? notificationsOff : notificationsOn}
             >
-              <NotificationIcon />
+              {notify ? <NotificationsActive /> : <NotificationsNone />}
             </IconButton>
             <IconButton
               className={classes.exit}
               color="inherit"
               aria-label="sign-out"
               edge="start"
+              onClick={signOut}
             >
               <ExitIcon />
             </IconButton>
@@ -112,9 +120,15 @@ function ResponsiveDrawer(props) {
         </Toolbar>
       </AppBar>
       <DrawerContent
-        container={container}
+        user={user}
+        rooms={rooms}
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
+        showCreate={showCreate}
+        setShowCreate={setShowCreate}
+        searchWord={searchWord}
+        setSearchWord={setSearchWord}
+        searchResults={searchResults}
       />
       <div className={classes.chat}>
         <main className={classes.content}>
@@ -147,4 +161,4 @@ function ResponsiveDrawer(props) {
   );
 }
 
-export default ResponsiveDrawer;
+export default Chat;

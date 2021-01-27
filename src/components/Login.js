@@ -90,6 +90,7 @@ const Login = ({
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={email.length < 10 || password.length < 3}
           >
             Sign In
           </Button>

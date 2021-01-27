@@ -81,7 +81,8 @@ const ChatMessages = ({ avatar, messages, side }) => {
       )}
       <Grid item xs={8}>
         {messages.map((msg, i) => (
-          <div className={classes[`${side}Row`]}>
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={i} className={classes[`${side}Row`]}>
             <Typography
               align="left"
               className={`${classes.msg} ${classes[side]} ${attachClass(i)}`}

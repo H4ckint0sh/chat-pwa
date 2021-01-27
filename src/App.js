@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { AuthProvider } from './context/Auth';
 import PrivateRoute from './PrivateRoute';
 
-const Chat = lazy(() => import('./components/Chat'));
+const ChatContainer = lazy(() => import('./containers/ChatContainer'));
 const LoginContainer = lazy(() => import('./containers/LoginContainer'));
 const RegisterContainer = lazy(() => import('./containers/RegisterContainer'));
 
@@ -16,7 +16,7 @@ const App = () => {
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
           <Switch>
-            <PrivateRoute exact path="/" component={Chat} />
+            <PrivateRoute exact path="/" component={ChatContainer} />
             <Route exact path="/login" component={LoginContainer} />
             <Route exact path="/signup" component={RegisterContainer} />
           </Switch>

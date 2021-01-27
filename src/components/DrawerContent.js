@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React from 'react';
 import {
   Divider,
@@ -17,6 +18,7 @@ import {
 } from '@material-ui/core';
 import { Add, MeetingRoom, MoreVert, Search } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import CreateChat from './CreateChat';
 
 const drawerWidth = 240;
 
@@ -62,17 +64,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function DrawerContent({ container, mobileOpen, handleDrawerToggle }) {
+function DrawerContent({
+  user,
+  rooms,
+  mobileOpen,
+  handleDrawerToggle,
+  showCreate,
+  setShowCreate,
+  searchWord,
+  setSearchWord,
+  searchResults,
+}) {
   const classes = useStyles();
   const theme = useTheme();
   const drawer = (
     <div>
       <div className={classes.profile}>
-        <Avatar className={classes.avatar} src="" />
+        <Avatar className={classes.avatar} src={user.photoURL} />
         <Typography className={classes.displayName} variant="h6" gutterBottom>
-          Alijan Adeli
+          {user.displayName}
         </Typography>
-        <Typography>alijan.adeli@gmail.com</Typography>
+        <Typography>{user.email}</Typography>
       </div>
       <Divider />
       <div className={classes.addRoom}>
@@ -80,47 +92,80 @@ function DrawerContent({ container, mobileOpen, handleDrawerToggle }) {
           className={classes.addButton}
           variant="contained"
           color="primary"
+          onClick={() => setShowCreate(true)}
           startIcon={<Add />}
         >
           Add a chatroom
         </Button>
       </div>
+      {showCreate && (
+        <CreateChat
+          showCreate={showCreate}
+          setShowCreate={setShowCreate}
+          user={user}
+        />
+      )}
       <Divider />
       <Paper component="form" className={classes.search}>
         <InputBase
           className={classes.input}
           placeholder="Search a room ..."
           inputProps={{ 'aria-label': 'search-a-room' }}
+          value={searchWord}
+          onChange={(e) => setSearchWord(e.target.value)}
         />
-        <IconButton
-          type="submit"
-          className={classes.iconButton}
-          aria-label="search"
-          disabled
-        >
+        <IconButton className={classes.iconButton} aria-label="search" disabled>
           <Search />
         </IconButton>
       </Paper>
-      <div className={classes.demo}>
-        <List>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar>
-                <MeetingRoom />
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary="Single-line item"
-              secondary="Secondary text"
-            />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="delete">
-                <MoreVert />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        </List>
-      </div>
+      {searchResults ? (
+        <div className={classes.rooms}>
+          <List>
+            {searchResults.map((result) => (
+              <ListItem key={result.id}>
+                <ListItemAvatar>
+                  <Avatar>
+                    <MeetingRoom />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={result.name}
+                  secondary="Secondary text"
+                />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" aria-label="more">
+                    <MoreVert />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      ) : rooms ? (
+        <div className={classes.rooms}>
+          <List>
+            {rooms &&
+              rooms.map((room) => (
+                <ListItem key={room.id}>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <MeetingRoom />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={room.name}
+                    secondary="Secondary text"
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="more">
+                      <MoreVert />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+          </List>
+        </div>
+      ) : null}
     </div>
   );
   return (
@@ -128,7 +173,6 @@ function DrawerContent({ container, mobileOpen, handleDrawerToggle }) {
       {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
       <Hidden smUp implementation="css">
         <Drawer
-          container={container}
           variant="temporary"
           anchor={theme.direction === 'rtl' ? 'right' : 'left'}
           open={mobileOpen}

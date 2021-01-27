@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import app from '../config/firebase';
+import { auth } from '../config/firebase';
 
 export const AuthContext = React.createContext();
 
@@ -8,13 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
-    import('firebase/auth').then(() => {
-      const auth = app.auth();
-
-      auth.onAuthStateChanged((user) => {
-        setCurrentUser(user);
-        setPending(false);
-      });
+    auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setPending(false);
     });
   }, []);
 
