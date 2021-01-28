@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import ExitIcon from '@material-ui/icons/ExitToApp';
-import { NotificationsActive, NotificationsNone } from '@material-ui/icons';
+import { NotificationsActive, NotificationsOff } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import ChatMessages from './ChatMessages';
 import MessageInput from './MessageInput';
@@ -88,9 +88,6 @@ function Chat({
 }) {
   const classes = useStyles();
 
-  const AVATAR =
-    'https://i.pinimg.com/originals/0a/dd/87/0add874e1ea0676c4365b2dd7ddd32e3.jpg';
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -113,7 +110,7 @@ function Chat({
               edge="start"
               onClick={notify ? notificationsOff : notificationsOn}
             >
-              {notify ? <NotificationsActive /> : <NotificationsNone />}
+              {notify ? <NotificationsActive /> : <NotificationsOff />}
             </IconButton>
             <IconButton
               className={classes.exit}
@@ -151,6 +148,7 @@ function Chat({
                   side={message.userId === user.uid ? 'right' : 'left'}
                   message={{ message, index: i }}
                   messages={messages}
+                  avatar={message.avatar}
                   userHasChanged={
                     i !== 0 && messages[i].userId !== messages[i - 1].userId
                   }

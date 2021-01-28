@@ -70,6 +70,7 @@ function ChatContainer({ history }) {
       (async () => {
         await db.collection('rooms').doc(room.id).collection('messages').add({
           name: currentUser.displayName,
+          avatar: currentUser.photoURL,
           message: input,
           timestamp: firebase.firestore.FieldValue.serverTimestamp(),
           userId: currentUser.uid,
