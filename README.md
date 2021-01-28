@@ -4,7 +4,7 @@ Live messaging using react and firebase with complete PWA implementation and pus
 
 ## Live demo
 
-chat-pwa-c78fb.web.app
+https://chat-pwa-c78fb.web.app
 
 ### Available Scripts
 
