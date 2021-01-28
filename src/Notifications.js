@@ -27,7 +27,7 @@ export default class Notifications {
       messaging
         .getToken({
           vapidKey:
-            'BAAXqzCjtM18Fb9EaGtDWWUNnAk0tLVyLUvAcRqHG_o-a6gpVamUOeO-durdTXZLhmIfFNWvA1hyBB8CABdruJo',
+            'BAf49dxIAejzr1OEJcrS8YgTScfCa1hpH4iTuyKM0_g-1e3mV7VVU6jv3qbWvhtJM0JkkAKMrmWmfGHxYrmtrJQ',
         })
         .then((currentToken) => {
           console.log(currentToken);

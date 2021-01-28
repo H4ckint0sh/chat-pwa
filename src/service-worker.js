@@ -20,13 +20,6 @@ import {
   offlineFallback,
 } from 'workbox-recipes';
 
-// importScripts('https://www.gstatic.com/firebasejs/3.9.0/firebase-app.js');
-// importScripts('https://www.gstatic.com/firebasejs/3.9.0/firebase-messaging.js');
-// firebase.initializeApp({
-//   messagingSenderId: '194265597758',
-// });
-// console.log(firebase.messaging());
-
 clientsClaim();
 
 // Include offline.html in the manifest
