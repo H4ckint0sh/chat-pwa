@@ -30,7 +30,6 @@ export default class Notifications {
             'BAf49dxIAejzr1OEJcrS8YgTScfCa1hpH4iTuyKM0_g-1e3mV7VVU6jv3qbWvhtJM0JkkAKMrmWmfGHxYrmtrJQ',
         })
         .then((currentToken) => {
-          console.log(currentToken);
           if (currentToken) {
             this.saveToken(currentToken);
           } else {
@@ -49,7 +48,6 @@ export default class Notifications {
   }
 
   saveToken(token) {
-    console.log('getting here');
     if (this.tokensLoaded) {
       const isTokenRegistered = this.findExistingToken();
       if (isTokenRegistered) {
@@ -67,7 +65,16 @@ export default class Notifications {
   }
 
   deleteToken() {
-    console.log('please write delete code');
+    db.collection('tokens')
+      .doc(this.user.uid)
+      .delete()
+      .then(() => {
+        console.log('Token deleted successfully');
+        // db.collection('tokens')
+        //   .get()
+        //   .then((snap) => snap.docs.map((doc) => console.log(doc.data())));
+      })
+      .catch((err) => console.log('Error while deleting token', err));
   }
 
   findExistingToken() {

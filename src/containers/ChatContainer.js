@@ -65,7 +65,6 @@ function ChatContainer({ history }) {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    // setPopup(false);
     if (input && input.trim().length > 0) {
       (async () => {
         await db.collection('rooms').doc(room.id).collection('messages').add({
@@ -98,17 +97,6 @@ function ChatContainer({ history }) {
     };
   }, [currentUser.uid]);
 
-  useEffect(() => {
-    db.collection('users')
-      .doc(currentUser.uid)
-      .onSnapshot((snap) => {
-        setNotify(snap.data().notify);
-      });
-    if (notifications) {
-      notifications.getPermission();
-    }
-  }, [currentUser.uid, notifications]);
-
   const notificationsOn = () => {
     notifications.changeUser(currentUser);
     notifications.getPermission();
@@ -122,7 +110,22 @@ function ChatContainer({ history }) {
 
   const notificationsOff = () => {
     notifications.deleteToken();
+    db.collection('users').doc(currentUser.uid).set(
+      {
+        notify: false,
+      },
+      { merge: true }
+    );
   };
+
+  useEffect(() => {
+    db.collection('users')
+      .doc(currentUser.uid)
+      .onSnapshot((snap) => setNotify(snap.data().notify));
+    if (notifications) {
+      notifications.getPermission();
+    }
+  }, []);
 
   // serch rooms
   useEffect(() => {
