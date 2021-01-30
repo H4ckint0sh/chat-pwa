@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    margin: theme.spacing(1, 0, 2),
+    padding: '10px 0',
   },
 }));
 
@@ -95,7 +96,7 @@ const Login = ({
             Sign In
           </Button>
           <Button
-            variant="outlined"
+            variant="contained"
             style={{ padding: 10 }}
             onClick={handleGoogleLogin}
             fullWidth
