@@ -33,5 +33,15 @@ try {
   console.log(e);
 }
 
+db.enablePersistence().catch(function (err) {
+  if (err.code === 'failed-precondition') {
+    // mutltiple browser tabs open
+    console.log('persistence failed');
+  } else if (err.code === 'unimplemented') {
+    // Lack of browser support
+    console.log('persistence not availible');
+  }
+});
+
 export { messaging, db, auth };
 export default app;

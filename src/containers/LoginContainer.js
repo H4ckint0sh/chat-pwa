@@ -25,12 +25,18 @@ function LoginContainer(props) {
     await auth
       .signInWithPopup(provider)
       .then(async (result) => {
+        const userExist = db.collection('users').doc(result.user.uid);
+
+        if (userExist) {
+          return;
+        }
         // const token = result.credential.accessToken;
         const user = {
           displayName: result.user.displayName,
           photoURL: result.user.photoURL,
           uid: result.user.uid,
           email: result.user.email,
+          notify: false,
         };
         await db.collection('users').doc(user.uid).set(user);
       })
