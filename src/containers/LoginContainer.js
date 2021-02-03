@@ -1,5 +1,10 @@
 import React, { useState, useContext } from 'react';
-import firebase from 'firebase/app';
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { getDoc, collection, doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { AuthContext } from '../context/Auth';
 import Login from '../components/Login';
@@ -11,26 +16,34 @@ function LoginContainer(props) {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    try {
-      await auth().signInWithEmailAndPassword(email, password);
-      history.push('/');
-    } catch (error) {
-      console.log(error);
-    }
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        console.log(userCredential.user);
+        history.push('/');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log('errorCode : ', errorCode, 'ErrorMessage : ', errorMessage);
+      });
   };
 
   const handleGoogleLogin = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new GoogleAuthProvider();
 
-    await auth
-      .signInWithPopup(provider)
+    await signInWithPopup(auth, provider)
       .then(async (result) => {
-        const userExist = db.collection('users').doc(result.user.uid);
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        //
+        const docRef = doc(collection(db, 'users'), result.user.uid);
+        const docSnap = await getDoc(docRef);
 
-        if (userExist) {
+        if (docSnap) {
           return;
         }
-        // const token = result.credential.accessToken;
         const user = {
           displayName: result.user.displayName,
           photoURL: result.user.photoURL,
@@ -38,10 +51,22 @@ function LoginContainer(props) {
           email: result.user.email,
           notify: false,
         };
-        await db.collection('users').doc(user.uid).set(user);
+
+        // Add a new document with a generated id
+        const newUserRef = doc(collection(db, 'users'));
+
+        // add new user
+        await setDoc(newUserRef, user);
       })
       .catch((error) => {
-        console.log(error);
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const { email } = error;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
       });
   };
 

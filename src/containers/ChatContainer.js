@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-undef */
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import firebase from 'firebase';
+// import firebase from 'firebase';
 import { AuthContext } from '../context/Auth';
 import { db, auth } from '../config/firebase';
 import Chat from '../components/Chat';
