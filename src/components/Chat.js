@@ -128,6 +128,7 @@ function Chat({
       <DrawerContent
         user={user}
         rooms={rooms}
+        messages={messages}
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
         showCreate={showCreate}

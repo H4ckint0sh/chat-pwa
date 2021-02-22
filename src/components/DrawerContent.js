@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
 function DrawerContent({
   user,
   rooms,
+  messages,
   setRoom,
   mobileOpen,
   handleDrawerToggle,
@@ -78,6 +79,7 @@ function DrawerContent({
 }) {
   const classes = useStyles();
   const theme = useTheme();
+  const lastMessage = messages[messages.length - 1];
   const drawer = (
     <div>
       <div className={classes.profile}>
@@ -131,7 +133,7 @@ function DrawerContent({
                 </ListItemAvatar>
                 <ListItemText
                   primary={result.name}
-                  secondary="Secondary text"
+                  secondary={lastMessage ? lastMessage.message : ''}
                 />
                 <ListItemSecondaryAction>
                   <IconButton edge="end" aria-label="more">
@@ -150,13 +152,16 @@ function DrawerContent({
               rooms.map((room) => (
                 <ListItem button key={room.id} onClick={() => setRoom(room)}>
                   <ListItemAvatar>
-                    <Avatar>
-                      <MeetingRoom />
+                    <Avatar
+                      alt=""
+                      src={messages.length ? lastMessage.avatar : ''}
+                    >
+                      {!messages.length && <MeetingRoom />}
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
                     primary={room.name}
-                    secondary="Secondary text"
+                    secondary={lastMessage ? lastMessage.message : ''}
                   />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="more">
