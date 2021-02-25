@@ -70,9 +70,6 @@ export default class Notifications {
       .delete()
       .then(() => {
         console.log('Token deleted successfully');
-        // db.collection('tokens')
-        //   .get()
-        //   .then((snap) => snap.docs.map((doc) => console.log(doc.data())));
       })
       .catch((err) => console.log('Error while deleting token', err));
   }

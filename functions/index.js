@@ -21,7 +21,6 @@ exports.sendNotification = functions.firestore
         resp.docs.map((doc) => {
           return registrationTokens.push(doc.data().token);
         });
-        console.log(registrationTokens);
       })
       .catch((err) => console.log('Error getting tokens', err));
 
