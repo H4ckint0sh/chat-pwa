@@ -12,7 +12,7 @@ function LoginContainer(props) {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      await auth().signInWithEmailAndPassword(email, password);
+      await auth.signInWithEmailAndPassword(email, password);
       history.push('/');
     } catch (error) {
       console.log(error);
