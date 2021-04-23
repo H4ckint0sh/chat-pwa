@@ -11,7 +11,7 @@ function RegisterContainer({ history }) {
   const handleSignUp = async (event) => {
     event.preventDefault();
     try {
-      await auth()
+      await auth
         .createUserWithEmailAndPassword(email, password)
         .then((resp) => {
           const fullName = `${
